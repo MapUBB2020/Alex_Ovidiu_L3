@@ -1,8 +1,9 @@
-package lab3.repository;
+package ro.alexpugna.university.repository;
 
 /**
  * CRUD operations repository interface
  */
+
 public interface ICrudRepository<E> {
 
     /**
