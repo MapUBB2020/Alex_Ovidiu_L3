@@ -1,0 +1,18 @@
+﻿Labor 4 - Students (Deadline 8-te Woche - 22 November 2020)
+
+
+----------------------------------------------------------------------------------------------------------------
+Problem:
+----------------------------------------------------------------------------------------------------------------
+
+
+Fahren Sie mit der für Labor 3 implementierten Lösung fort und implementieren Sie die folgenden Anweisungen:
+
+
+* Implementieren Error Handling mit der Verwendung von eigene Exceptions;
+* Implementierung einer FileRepository für jede notwendige Repository (nutzt ICrudRepository für jede Methode aus FileRepository);
+* Sortieren Sie eine Liste von Studenten oder Kurse basierend auf einem von Ihnen definierten Kriterium;
+* Filtrieren Sie eine Liste von die Anwendung basierend auf einem von Ihnen definierten Kriterium;
+* Modellieren Sie den Kontroller und Konsole-View Layer;
+* Testen alle Methoden aus Kontroller, das implementiert mehr als nur einen Aufruf an das Repository Methode;
+* Neues UML Diagram für die aktuelle Zustand erstellen; (InteliJ/Star UML/Draw.io)
