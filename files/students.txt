@@ -1,0 +1,3 @@
+1,Alex,Pugna,11,1,3
+2,Ovidiu,Muntean,0,
+3,Gigi,Becali,0,

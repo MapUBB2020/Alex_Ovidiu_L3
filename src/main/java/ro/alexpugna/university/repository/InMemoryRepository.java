@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class InMemoryRepository<E extends Entity> implements ICrudRepository<E> {
-    private List<E> items = new ArrayList<>();
+    protected List<E> items = new ArrayList<>();
 
     @Override
     public E findOne(Long id) {

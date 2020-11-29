@@ -2,6 +2,7 @@ package ro.alexpugna.university.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ro.alexpugna.university.exception.*;
 import ro.alexpugna.university.model.Course;
 import ro.alexpugna.university.model.Student;
 import ro.alexpugna.university.model.Teacher;
@@ -38,12 +39,12 @@ public class UniversityServiceTest {
 
     @Test
     public void testRegister() {
-        assertFalse(universityService.register(10L, 1L)); // non-existing course
-        assertFalse(universityService.register(1L, 10L)); // non-existing student
-        assertTrue(universityService.register(1L, 1L)); // good
-        assertFalse(universityService.register(1L, 1L)); // already registered student
-        assertFalse(universityService.register(3L, 2L)); // too many credits
-        assertFalse(universityService.register(1L, 2L)); // no free places
+        assertThrows(ItemNotFoundException.class, () -> universityService.register(10L, 1L));
+        assertThrows(ItemNotFoundException.class, () -> universityService.register(1L, 10L));
+        assertDoesNotThrow(() -> universityService.register(1L, 1L));
+        assertThrows(StudentAlreadyEnrolledException.class, () -> universityService.register(1L, 1L));
+        assertThrows(StudentCreditsOverflowException.class, () -> universityService.register(3L, 2L));
+        assertThrows(FullCourseException.class, () -> universityService.register(1L, 2L));
 
         List<Course> courses = universityService.getAllCourses();
         courses.forEach(course -> {
@@ -53,14 +54,14 @@ public class UniversityServiceTest {
     }
 
     @Test
-    public void testRetrieveCoursesWithFreePlaces() {
+    public void testRetrieveCoursesWithFreePlaces() throws ProgramException {
         assertEquals(3, universityService.retrieveCoursesWithFreePlaces().size());
         universityService.register(1L, 1L);
         assertEquals(2, universityService.retrieveCoursesWithFreePlaces().size());
     }
 
     @Test
-    public void testRetrieveCoursesEnrolledForACourse() {
+    public void testRetrieveCoursesEnrolledForACourse() throws ProgramException {
         assertEquals(0, universityService.retrieveStudentsEnrolledForACourse(1L).size());
         universityService.register(1L, 1L);
         assertEquals(1, universityService.retrieveStudentsEnrolledForACourse(1L).size());
@@ -68,12 +69,12 @@ public class UniversityServiceTest {
 
     @Test
     public void testGetAllCourses() {
-        assertFalse(universityService.register(10L, 1L)); // non-existing course
-        assertFalse(universityService.register(1L, 10L)); // non-existing student
-        assertTrue(universityService.register(1L, 1L)); // good
-        assertFalse(universityService.register(1L, 1L)); // already registered student
-        assertFalse(universityService.register(3L, 2L)); // too many credits
-        assertFalse(universityService.register(1L, 2L)); // no free places
+        assertThrows(ItemNotFoundException.class, () -> universityService.register(10L, 1L));
+        assertThrows(ItemNotFoundException.class, () -> universityService.register(1L, 10L));
+        assertDoesNotThrow(() -> universityService.register(1L, 1L));
+        assertThrows(StudentAlreadyEnrolledException.class, () -> universityService.register(1L, 1L));
+        assertThrows(StudentCreditsOverflowException.class, () -> universityService.register(3L, 2L));
+        assertThrows(FullCourseException.class, () -> universityService.register(1L, 2L));
 
         List<Course> courses = universityService.getAllCourses();
         courses.forEach(course -> {
@@ -84,20 +85,20 @@ public class UniversityServiceTest {
 
     @Test
     public void testUpdateCourseCredits() {
-        assertFalse(universityService.updateCourseCredits(10L, 30));
-        universityService.register(1L, 1L);
+        assertThrows(ItemNotFoundException.class, () -> universityService.updateCourseCredits(10L, 30));
+        assertDoesNotThrow(() -> universityService.register(1L, 1L));
         Student student = universityService.retrieveStudentsEnrolledForACourse(1L).get(0);
         assertEquals(Integer.valueOf(5), student.getTotalCredits());
-        assertTrue(universityService.updateCourseCredits(1L, 10));
+        assertDoesNotThrow(() -> universityService.updateCourseCredits(1L, 10));
         student = universityService.retrieveStudentsEnrolledForACourse(1L).get(0);
         assertEquals(Integer.valueOf(10), student.getTotalCredits());
     }
 
     @Test
     public void deleteCourse() {
-        assertFalse(universityService.deleteCourse(10L));
-        universityService.register(1L, 1L);
-        assertTrue(universityService.deleteCourse(1L));
+        assertThrows(ItemNotFoundException.class, () -> universityService.deleteCourse(10L));
+        assertDoesNotThrow(() -> universityService.register(1L, 1L));
+        assertDoesNotThrow(() -> universityService.deleteCourse(1L));
         Student student1 = universityService.getAllStudents().stream().filter(student -> student.getId().equals(1L)).findFirst().get();
         assertEquals(0, student1.getEnrolledCourses().size());
         assertEquals(Integer.valueOf(0), student1.getTotalCredits());

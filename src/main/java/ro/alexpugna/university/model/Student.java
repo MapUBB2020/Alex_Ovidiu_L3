@@ -2,11 +2,10 @@ package ro.alexpugna.university.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Student extends Person {
     private Integer totalCredits = 0;
-    private List<Course> enrolledCourses = new ArrayList<>();
+    private List<Long> enrolledCourses = new ArrayList<>();
 
     public Student(Long id, String firstName, String lastName) {
         super(id, firstName, lastName);
@@ -16,36 +15,40 @@ public class Student extends Person {
         return totalCredits;
     }
 
-    public void setTotalCredits(Integer totalCredits) {
-        this.totalCredits = totalCredits;
-    }
-
-    public void removeCourse(Long courseId) {
-        Course course1 = enrolledCourses.stream()
-                .filter(course -> course.getId().equals(courseId))
+    public void removeCourse(Course course) {
+        Long course1 = enrolledCourses.stream()
+                .filter(c -> c.equals(course.getId()))
                 .findFirst()
                 .orElse(null);
         if (course1 != null) {
-            totalCredits -= course1.getCredits();
+            totalCredits -= course.getCredits();
             enrolledCourses.remove(course1);
         }
     }
 
-    public List<Course> getEnrolledCourses() {
+    public void setTotalCredits(Integer totalCredits) {
+        this.totalCredits = totalCredits;
+    }
+
+    public List<Long> getEnrolledCourses() {
         return enrolledCourses;
     }
 
     public void addCourseToEnroll(Course course) {
-        enrolledCourses.add(course);
+        enrolledCourses.add(course.getId());
         totalCredits += course.getCredits();
+    }
+
+    public void addCourseToEnroll(Long courseId) {
+        enrolledCourses.add(courseId);
     }
 
     @Override
     public String toString() {
-        String coursesString = enrolledCourses.stream().map(course -> course.getId().toString()).collect(Collectors.joining(","));
-        return "Student{" + super.toString() +
+        return "Student{" +
+                super.toString() +
                 ", totalCredits=" + totalCredits +
-                ", enrolledCourses=[" + coursesString +
-                "]} ";
+                ", enrolledCourses=" + enrolledCourses +
+                "} ";
     }
 }

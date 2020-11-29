@@ -1,5 +1,7 @@
 package ro.alexpugna.university.ui;
 
+import ro.alexpugna.university.exception.ItemNotFoundException;
+import ro.alexpugna.university.exception.ProgramException;
 import ro.alexpugna.university.model.Course;
 import ro.alexpugna.university.service.UniversityService;
 
@@ -21,7 +23,9 @@ public class Console {
         System.out.println("5. Update number of credits of a course");
         System.out.println("6. Delete a course");
         System.out.println("7. Show all students");
-        System.out.println("8. Exit");
+        System.out.println("8. Show all students sorted by last name");
+        System.out.println("9. Show all courses having the number of credits greater than or equal to a given value");
+        System.out.println("10. Exit");
     }
 
     private void showAllCourses() {
@@ -32,16 +36,12 @@ public class Console {
         service.getAllStudents().forEach(System.out::println);
     }
 
-    private void register(Scanner scanner) {
+    private void register(Scanner scanner) throws ProgramException {
         System.out.println("Enter the id of the course and id of the student");
         long courseId = scanner.nextLong();
         long studentId = scanner.nextLong();
-        boolean outcome = service.register(courseId, studentId);
-        if (outcome) {
-            System.out.println("Register successful!");
-        } else {
-            System.out.println("Register failed!");
-        }
+        service.register(courseId, studentId);
+        System.out.println("Register successful!");
     }
 
     private void showCoursesAndPlaces() {
@@ -58,56 +58,52 @@ public class Console {
         service.retrieveStudentsEnrolledForACourse(courseId).forEach(System.out::println);
     }
 
-    private void updateCreditsForCourse(Scanner scanner) {
+    private void updateCreditsForCourse(Scanner scanner) throws ItemNotFoundException {
         System.out.println("Enter the course id and the new number of credits");
         long courseId = scanner.nextLong();
         int newCredits = scanner.nextInt();
-        if (service.updateCourseCredits(courseId, newCredits)) {
-            System.out.println("Update successful!");
-        } else {
-            System.out.println("Update failed!");
-        }
+        service.updateCourseCredits(courseId, newCredits);
+        System.out.println("Update successful!");
     }
 
-    private void deleteCourse(Scanner scanner) {
+    private void deleteCourse(Scanner scanner) throws ItemNotFoundException {
         System.out.println("Enter the course id");
         long courseId = scanner.nextLong();
-        if (service.deleteCourse(courseId)) {
-            System.out.println("Delete successful!");
-        } else {
-            System.out.println("Delete failed!");
-        }
+        service.deleteCourse(courseId);
+        System.out.println("Delete successful!");
+    }
+
+    private void showAllStudentsSortedByLastName() {
+        service.getStudentsSortedByLastName().forEach(System.out::println);
+    }
+
+    private void filterCoursesByCredits(Scanner scanner) {
+        System.out.println("Enter the course credits threshold");
+        int threshold = scanner.nextInt();
+        service.getCoursesHavingCreditsAtLeast(threshold).forEach(System.out::println);
     }
 
     public void run() {
         int choice = 0;
 
         Scanner scanner = new Scanner(System.in);
-        while (choice != 8) {
+        while (choice != 10) {
             printMenuOptions();
             choice = scanner.nextInt();
-            switch (choice) {
-                case 1:
-                    register(scanner);
-                    break;
-                case 2:
-                    showCoursesAndPlaces();
-                    break;
-                case 3:
-                    showStudentsEnrolledToCourse(scanner);
-                    break;
-                case 4:
-                    showAllCourses();
-                    break;
-                case 5:
-                    updateCreditsForCourse(scanner);
-                    break;
-                case 6:
-                    deleteCourse(scanner);
-                    break;
-                case 7:
-                    showAllStudents();
-                    break;
+            try {
+                switch (choice) {
+                    case 1 -> register(scanner);
+                    case 2 -> showCoursesAndPlaces();
+                    case 3 -> showStudentsEnrolledToCourse(scanner);
+                    case 4 -> showAllCourses();
+                    case 5 -> updateCreditsForCourse(scanner);
+                    case 6 -> deleteCourse(scanner);
+                    case 7 -> showAllStudents();
+                    case 8 -> showAllStudentsSortedByLastName();
+                    case 9 -> filterCoursesByCredits(scanner);
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         }
         scanner.close();

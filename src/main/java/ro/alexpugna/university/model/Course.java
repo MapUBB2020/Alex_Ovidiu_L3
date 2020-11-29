@@ -7,7 +7,7 @@ public class Course extends Entity {
     private String name; // the name of the course
     private Person teacher; // the teacher conducting the course
     private Integer maxEnrollment; // students limit for enrollment
-    private List<Student> studentsEnrolled; // students enrolled at the course
+    private List<Long> studentsEnrolled; // students enrolled at the course
     private Integer credits;
 
     public Course(Long id, String name, Person teacher, Integer maxEnrollment, Integer credits) {
@@ -43,12 +43,16 @@ public class Course extends Entity {
         this.maxEnrollment = maxEnrollment;
     }
 
-    public List<Student> getStudentsEnrolled() {
+    public List<Long> getStudentsEnrolled() {
         return studentsEnrolled;
     }
 
     public void addStudent(Student student) {
-        studentsEnrolled.add(student);
+        studentsEnrolled.add(student.getId());
+    }
+
+    public void addStudent(Long studentId) {
+        studentsEnrolled.add(studentId);
     }
 
     public Integer getCredits() {
@@ -60,7 +64,7 @@ public class Course extends Entity {
     }
 
     public boolean isStudentEnrolled(Student student) {
-        return studentsEnrolled.stream().anyMatch(s -> s.equals(student));
+        return studentsEnrolled.stream().anyMatch(s -> s.equals(student.getId()));
     }
 
     public boolean hasFreePlaces() {
